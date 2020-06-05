@@ -21,15 +21,19 @@ containsElement () {
   return 1
 }
 
-## define global directory paths by commands
-readonly WARDEN_HOME_DIR=~/.warden
-readonly WARDEN_SSL_DIR="${WARDEN_HOME_DIR}/ssl"
+## define environment requirements
+readonly WARDEN_REQUIRED_DOCKER_COMPOSE="1.18.0"
+
+## define and export global shared directory paths
+export readonly WARDEN_HOME_DIR="${WARDEN_HOME_DIR:-"$HOME/.warden"}"
+export readonly WARDEN_SSL_DIR="${WARDEN_HOME_DIR}/ssl"
+export readonly WARDEN_COMPOSER_DIR="${WARDEN_COMPOSER_DIR:-"$HOME/.composer"}"
 
 ## declare variables for flags and arguments
 declare WARDEN_HELP=
 declare WARDEN_PARAMS=()
 declare WARDEN_COMMAND=
-declare WARDEN_ANYARGS=(env db)
+declare WARDEN_ANYARGS=(env db shell debug)
 declare WARDEN_VERBOSE=
 
 ## parse first argument as command and determine validity
@@ -66,19 +70,6 @@ while (( "$#" )); do
       ;;
   esac
 done
-
-function assert_installed {
-  if [[ ! -f "${WARDEN_HOME_DIR}/.installed" ]] \
-    || [[ "${WARDEN_HOME_DIR}/.installed" -ot "${WARDEN_DIR}/bin/warden" ]]
-  then
-    [[ -f "${WARDEN_HOME_DIR}/.installed" ]] && echo "==> Updating warden" || echo "==> Starting initialization"
-
-    "${WARDEN_DIR}/bin/warden" install
-
-    [[ -f "${WARDEN_HOME_DIR}/.installed" ]] && echo "==> Update complete" || echo "==> Initialization complete"
-    date > "${WARDEN_HOME_DIR}/.installed"
-  fi
-}
 
 ## display command specific usage info if help flag is set
 if [[ ${WARDEN_HELP} ]]; then

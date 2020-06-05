@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-[[ ! ${WARDEN_COMMAND} ]] && >&2 echo -e "\033[31mThis script is not intended to be run directly!" && exit 1
+[[ ! ${WARDEN_COMMAND} ]] && >&2 echo -e "\033[31mThis script is not intended to be run directly!\033[0m" && exit 1
 
 mkdir -p "${WARDEN_SSL_DIR}/certs"
 
@@ -32,17 +32,19 @@ openssl genrsa -out "${WARDEN_SSL_DIR}/certs/${CERTIFICATE_NAME}.key.pem" 2048
 echo "==> Generating signing req ${CERTIFICATE_NAME}.crt.pem"
 openssl req -new -sha256 -config <(cat                            \
     "${WARDEN_DIR}/config/openssl/certificate.conf"               \
-    <(printf "subjectAltName = %s" "${CERTIFICATE_SAN_LIST}")     \
+    <(printf "extendedKeyUsage = serverAuth,clientAuth \n         \
+      subjectAltName = %s" "${CERTIFICATE_SAN_LIST}")             \
   )                                                               \
   -key "${WARDEN_SSL_DIR}/certs/${CERTIFICATE_NAME}.key.pem"      \
   -out "${WARDEN_SSL_DIR}/certs/${CERTIFICATE_NAME}.csr.pem"      \
-  -subj "/C=US/CN=${CERTIFICATE_NAME}"
+  -subj "/C=US/O=Warden.dev/CN=${CERTIFICATE_NAME}"
 
 echo "==> Generating certificate ${CERTIFICATE_NAME}.crt.pem"
 openssl x509 -req -days 365 -sha256 -extensions v3_req            \
   -extfile <(cat                                                  \
     "${WARDEN_DIR}/config/openssl/certificate.conf"               \
-    <(printf "subjectAltName = %s" "${CERTIFICATE_SAN_LIST}")     \
+    <(printf "extendedKeyUsage = serverAuth,clientAuth \n         \
+      subjectAltName = %s" "${CERTIFICATE_SAN_LIST}")             \
   )                                                               \
   -CA "${WARDEN_SSL_DIR}/rootca/certs/ca.cert.pem"                \
   -CAkey "${WARDEN_SSL_DIR}/rootca/private/ca.key.pem"            \
@@ -50,7 +52,8 @@ openssl x509 -req -days 365 -sha256 -extensions v3_req            \
   -in "${WARDEN_SSL_DIR}/certs/${CERTIFICATE_NAME}.csr.pem"       \
   -out "${WARDEN_SSL_DIR}/certs/${CERTIFICATE_NAME}.crt.pem" 
 
-if [[ "$(cd "${WARDEN_DIR}" && docker-compose -p warden -f docker/docker-compose.yml ps -q traefik)" ]]; then
+if [[ "$(cd "${WARDEN_HOME_DIR}" && docker-compose -p warden -f "${WARDEN_DIR}/docker/docker-compose.yml" ps -q traefik)" ]]
+then
   echo "==> Updating traefik"
   "${WARDEN_DIR}/bin/warden" up traefik
   "${WARDEN_DIR}/bin/warden" restart traefik

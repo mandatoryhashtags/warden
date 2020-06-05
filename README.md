@@ -1,28 +1,34 @@
 # Warden
-Warden is a CLI utility for working with docker-compose environments, and enables multiple local developer environments to run simultaneously without port conflicts via the use of a few centrally run services for proxying into each environment's containers.
 
-## Prerequisites
+Warden is a CLI utility for orchestrating Docker based developer environments, and enables multiple local environments to run simultaneously without port conflicts via the use of a few centrally run services for proxying requests into the correct environment's containers.
 
-* [Homebrew](https://brew.sh) package manager (for installing Warden)
-* [Docker for Mac](https://hub.docker.com/editions/community/docker-ce-desktop-mac) or [Docker for Linux](https://docs.docker.com/install/linux/docker-ce/fedora/) (currently tested on Fedora 29)
-* `docker-compose` available in your `$PATH` (included in Docker for Mac, can be installed via brew on Linux hosts)
+<!-- include_open_stop -->
 
-## Installing Warden
-
-    brew install davidalger/warden/warden
-    warden up
+* [Warden Website](https://warden.dev/)
+* [Warden Documentation](https://docs.warden.dev/)
+* [Installing Warden](https://docs.warden.dev/installing.html)
+* [Environment Types](https://docs.warden.dev/environments/types.html)
+* [Initializing An Environment](https://docs.warden.dev/environments/initializing.html)
+* [Docker Images](https://docs.warden.dev/images.html)
 
 ## Features
 
 * Traefik for SSL termination and routing/proxying requests into the correct containers.
 * Portainer for quick visibility into what's running inside the local Docker host.
-* Dnsmasq to serve DNS responses for .test domains eliminating manual editing of `/etc/hosts`
-* An SSH tunnel for connecting from SequelPro or TablePlus into any one of multiple running database containers.
-* Warden wildcard SSl certificate signing for running https on all local development domains.
+* Dnsmasq to serve DNS responses for `.test` domains eliminating manual editing of `/etc/hosts`
+* An SSH tunnel for connecting from Sequel Pro or TablePlus into any one of multiple running database containers.
+* Warden issued wildcard SSL certificates for running https on all local development domains.
+* Full support for Magento 1, Magento 2, Laravel, and custom project environment configurations on macOS and Linux.
+
+## Contributing
+
+All contributions to the Warden project are welcome: use-cases, documentation, code, patches, bug reports, feature requests, etc. Any and all contributions may be made by submitting [Issues](https://github.com/davidalger/warden/issues) and [Pull Requests](https://github.com/davidalger/warden/pulls) here on Github.
+
+Please note that by submitting a pull request or otherwise contributing to the Warden project, you warrant that each of your contributions is an original work and that you have full authority to grant rights to said contribution and by so doing you grant the owners of the Warden project, and those who receive the contribution directly or indirectly, a perpetual, worldwide, non-exclusive, royalty-free, irrevocable license to make, have made, use, offer to sell, sell and import or otherwise dispose of the contributions alone or with the Warden project in it's entirety.
 
 ## License
 
-This work is licensed under the MIT license. See LICENSE file for details.
+This work is licensed under the MIT license. See [LICENSE](https://github.com/davidalger/warden/blob/develop/LICENSE) file for details.
 
 ## Author Information
 
